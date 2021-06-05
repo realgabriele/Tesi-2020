@@ -119,6 +119,7 @@ class WeightsInput(AbsFrame):
                 if row > 0 and column > 0:
                     e = tk.Entry(self, validate="key", validatecommand=vcmd, width=5)
                     e.insert(0, '1')
+                    e.bind("<KeyRelease>", self.key_pressed)
                 e.grid(row=row, column=column, stick="nsew")
                 self._entry[index] = e
 
@@ -151,6 +152,17 @@ class WeightsInput(AbsFrame):
         except ValueError:
             self.bell()
             return False
+
+    def key_pressed(self, event):
+        entry = event.widget
+        for k, v in self._entry.items():
+            if v == entry:
+                key = k
+        if key[0] != key[1]:
+            # set the diagonal entry to the same value
+            diag_entry = self._entry[(key[1], key[0])]
+            diag_entry.delete(0, tk.END)
+            diag_entry.insert(0, entry.get())
 
 
 class StringsInput(AbsFrame):
